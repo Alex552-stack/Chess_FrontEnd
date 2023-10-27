@@ -1,4 +1,5 @@
-﻿using Sah_clases.Clases;
+﻿using Chess_FrontEnd.FormComponents;
+using Sah_clases.Clases;
 using Sah_clases.Clases.PIeces;
 using System;
 using System.Collections.Generic;
@@ -17,12 +18,15 @@ namespace Chess_Visual
         private const int gridSize = 8;
         private const int squareSize = 100; // Size of each square in pixels
         Board board;
-        Tuple<int, int> dest = new Tuple<int,int>(0,0);
+        Tuple<int, int> SelectedPiece = new Tuple<int,int>(-1,-1);
+        VizComponents comp;
+        List<Tuple<int,int>> hints = new List<Tuple<int,int>>();
         
         public Form1()
         {
             InitializeComponent();
             InitializeGrid();
+            comp = new VizComponents(board, pictureBox1, hints);
         }
 
         private void InitializeGrid()
@@ -59,14 +63,33 @@ namespace Chess_Visual
             }
         }
 
-         private void pictureBox_Click(object sender, EventArgs e)
+        private void pictureBox_Click(object sender, EventArgs e)
+        {
+            if(SelectedPiece.Item1 == -1)
+                SelectedPiece = comp.SelectPiece(sender);
+            else
+            {
+                if(sender is PictureBox)
+                {
+                    var pictureBox = sender as PictureBox;
+                    var dest = pictureBox.Tag as Tuple<int, int>;
+                    board.MovePiece(SelectedPiece,dest);
+                    RefreshBoard();
+                }
+
+                SelectedPiece = Tuple.Create(-1, -1);
+            }
+            
+        }
+
+        /*private void pictureBox_Click(object sender, EventArgs e)
         {
             PictureBox pictureBox = sender as PictureBox;
-            var initPoz = pictureBox.Tag as Tuple<int,int>;
-            dest = Tuple.Create(initPoz.Item1, initPoz.Item2 + 2);
+            var initPoz = pictureBox.Tag as Tuple<int, int>;
+            dest = Tuple.Create(initPoz.Item1, initPoz.Item2 - 1);
             board.MovePiece(initPoz, dest);
             RefreshBoard();
-        }
+        }*/
 
         /*private void pictureBox_Click(object sender, EventArgs e)
         {
@@ -110,7 +133,7 @@ namespace Chess_Visual
                     }
                     else
                     {
-                        pictureBox.ImageLocation = null; // Clear the image if there's no piece on this square
+                        pictureBox.ImageLocation = ""; // Clear the image if there's no piece on this square
                     }
                 }
             }

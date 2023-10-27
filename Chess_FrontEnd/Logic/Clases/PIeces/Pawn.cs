@@ -11,7 +11,7 @@ namespace Sah_clases.Clases.PIeces
     internal class Pawn : AbstractPiece
     {
 
-        private bool isFirstMove = true;
+        public bool isFirstMove = true;
 
         public Pawn(int x, int y, Board board, bool isWhite) : base(x, y, board, isWhite)
         {
