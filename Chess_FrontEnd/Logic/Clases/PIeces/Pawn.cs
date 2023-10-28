@@ -21,7 +21,7 @@ namespace Sah_clases.Clases.PIeces
         {
             List<Tuple<int, int>> validMoves = new List<Tuple<int, int>>();
 
-            int offset = IsWhite ? -1 : 1;
+            int offset = IsWhite ? -1 : 1; //Daca este alb scade, daca e negru creste
 
             // Single square forward move
             if (IsValidMove(x, y + offset))
@@ -36,31 +36,43 @@ namespace Sah_clases.Clases.PIeces
             }
 
             // Diagonal captures
-            if (IsValidMove(x + 1, y + offset))
-            {
+            //if (IsValidMove(x + 1, y + 1))
+            //{
+            //    validMoves.Add(Tuple.Create(x + 1, y + 1));
+            //}
+            //if (IsValidMove(x + 1, y - 1))
+            //{
+            //    validMoves.Add(Tuple.Create(x + 1, y - 1));
+            //}
+            //if (IsValidMove(x - 1, y + 1))
+            //{
+            //    validMoves.Add(Tuple.Create(x - 1, y + 1));
+            //}
+            //if (IsValidMove(x - 1, y - 1))
+            //{
+            //    validMoves.Add(Tuple.Create(x - 1, y - 1));
+            //}
+            if (IsValidDiagonalCapture(x + 1, y + offset))
                 validMoves.Add(Tuple.Create(x + 1, y + offset));
-            }
-            if (IsValidMove(x + 1, y - 1))
-            {
-                validMoves.Add(Tuple.Create(x + 1, y - 1));
-            }
+            if (IsValidDiagonalCapture(x -1, y + offset))
+                validMoves.Add(Tuple.Create(x - 1, y + offset));
 
             return validMoves;
         }
         public override bool IsValidMove(int newx, int newy)
         {
-            int deltaX = Math.Abs(newx - x);
-            int deltaY = IsWhite?  y - newy : newy - y;
-
+            int deltaX = IsWhite ? x - newx : newx - x;
+            int offset = IsWhite ? -1 : 1;
+            int deltaY = Math.Abs(newy - y);
             
 
-            if (deltaY == 1 && deltaX == 0)
+            if (deltaY == 1 && deltaX == 0 && !board.ChessBoard.ContainsKey(Tuple.Create(newx, newy)))
             {
                 // Forward move
                 return true;
             }
 
-            if (isFirstMove && deltaY == 2 && deltaX == 0)
+            if (isFirstMove && deltaY == 2 && deltaX == 0 && !board.ChessBoard.ContainsKey(Tuple.Create(newx, newy)) && !board.ChessBoard.ContainsKey(Tuple.Create(newx,newy - offset)))
             {
                 // Two-square forward move on first move
                 return true;
@@ -68,15 +80,18 @@ namespace Sah_clases.Clases.PIeces
 
             if (deltaX == 1 && deltaY == 1 && IsValidDiagonalCapture(newx,newy))
                 return true;
+            if (deltaX == -1 && deltaY == 1 && IsValidDiagonalCapture(newx, newy))
+                return true;
             return false;
         }
+        
         private bool IsValidDiagonalCapture(int newx, int newy)
         {
             var pos = Tuple.Create(newx, newy);
             if (newx >= 0 && newx < 8 && newy >= 0 && newy < 8 && board.ChessBoard.ContainsKey(pos))
             {
                 var pieceAtPosition = board.ChessBoard[pos];
-                return pieceAtPosition != null && pieceAtPosition.IsWhite != IsWhite;
+                return (pieceAtPosition != null && pieceAtPosition.IsWhite != IsWhite);
             }
             return false;
         }

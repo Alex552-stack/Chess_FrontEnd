@@ -1,6 +1,7 @@
 ﻿using Sah_clases.Clases;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,16 +9,14 @@ using System.Windows.Forms;
 
 namespace Chess_FrontEnd.FormComponents
 {
-    internal class VizComponents
+    internal class OnClickController
     {
         Board board;
         PictureBox pictureBox1;
-        List<Tuple<int, int>> hints;
-        public VizComponents(Board board, PictureBox pictureBox1, List<Tuple<int, int>> hints)
+        public OnClickController(Board board, PictureBox pictureBox1)
         {
             this.board = board;
             this.pictureBox1 = pictureBox1;
-            this.hints = hints;
         }
 
         public Tuple<int,int> SelectPiece(object sender)
@@ -35,9 +34,12 @@ namespace Chess_FrontEnd.FormComponents
                         var movePos = movePictureBox.Tag as Tuple<int, int>;
                         if (movePos.Item1 == move.Item1 && movePos.Item2 == move.Item2)
                         {
-                            // Set the ImageLocation to hint.png
-                            hints.Add(movePos);
-                            movePictureBox.ImageLocation = "../../Images/Hint.png";
+                            //movepicturebox.imagelocation = "../../images/hint.png";
+                            //set the imagelocation to hint.png
+                            //hints.add(movepos);
+                            var hintPictureBox = movePictureBox.Controls[0] as PictureBox;
+                            hintPictureBox.Visible = true;
+                            hintPictureBox.BringToFront();
                         }
                     }
                 }
@@ -52,11 +54,11 @@ namespace Chess_FrontEnd.FormComponents
                 if(control is PictureBox)
                 {
                     PictureBox pictureBox = control as PictureBox;
-                    if (pictureBox.ImageLocation == "../../Images/Hint.png")
-                        pictureBox.ImageLocation = "";
+                    PictureBox hintBox = pictureBox.Controls[0] as PictureBox;
+                    hintBox.Visible = false;
                 }
             }
-            hints.Clear();
+            //hints.Clear();
         }
     }
 }

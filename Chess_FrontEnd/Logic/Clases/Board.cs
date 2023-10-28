@@ -38,6 +38,11 @@ namespace Sah_clases.Clases
                     ChessBoard[newPosition] = pawn;
                     pawn.x = newPosition.Item1;
                     pawn.y = newPosition.Item2;
+                    if(pawn is Pawn)
+                    {
+                        var paw = pawn as Pawn;
+                        paw.isFirstMove = false;
+                    }
                 }
                 else
                 {

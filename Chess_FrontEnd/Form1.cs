@@ -19,14 +19,13 @@ namespace Chess_Visual
         private const int squareSize = 100; // Size of each square in pixels
         Board board;
         Tuple<int, int> SelectedPiece = new Tuple<int,int>(-1,-1);
-        VizComponents comp;
-        List<Tuple<int,int>> hints = new List<Tuple<int,int>>();
+        OnClickController comp;
         
         public Form1()
         {
             InitializeComponent();
             InitializeGrid();
-            comp = new VizComponents(board, pictureBox1, hints);
+            comp = new OnClickController(board, pictureBox1);
         }
 
         private void InitializeGrid()
@@ -47,17 +46,30 @@ namespace Chess_Visual
                         BackColor = (i + j) % 2 == 0 ? Color.White : Color.Black, // Alternate colors
                         Tag = new Tuple<int, int>(i, j)
                     };
+                    PictureBox hintPictureBox = new PictureBox
+                    {
+                        Size = new Size(squareSize, squareSize),
+                        Location = new Point(i * squareSize - pictureBox.Left, j * squareSize - pictureBox.Top),
+                        ImageLocation = "../../Images/Hint.png",
+                        Tag = new Tuple<int, int>(i, j),
+                        BackColor = Color.Transparent,
+                        Visible = false,
+                    };
+                    hintPictureBox.Click += hint_Click;
+                    pictureBox.Controls.Add(hintPictureBox);
+
 
                     var poz = Tuple.Create(i, j);
                     if (board.ChessBoard.ContainsKey(poz) && board.ChessBoard[poz] is Pawn)
                     {
+                        pictureBox.Click += new EventHandler(pictureBox_Click);
                         pictureBox.SizeMode = PictureBoxSizeMode.AutoSize;
                         if (board.ChessBoard[poz].IsWhite)
                         pictureBox.ImageLocation = "../../Images/wp.png";
-                        else
+                        else if(!board.ChessBoard[poz].IsWhite)
                             pictureBox.ImageLocation = "../../Images/bp.png";
                     }
-                    pictureBox.Click += new EventHandler(pictureBox_Click);
+                    
                     pictureBox1.Controls.Add(pictureBox);
                 }
             }
@@ -65,21 +77,31 @@ namespace Chess_Visual
 
         private void pictureBox_Click(object sender, EventArgs e)
         {
-            if(SelectedPiece.Item1 == -1)
+            //if(SelectedPiece.Item1 == -1)
                 SelectedPiece = comp.SelectPiece(sender);
-            else
-            {
-                if(sender is PictureBox)
-                {
-                    var pictureBox = sender as PictureBox;
-                    var dest = pictureBox.Tag as Tuple<int, int>;
-                    board.MovePiece(SelectedPiece,dest);
-                    RefreshBoard();
-                }
+            //else
+            //{
+            //    if(sender is PictureBox)
+            //    {
+            //        var pictureBox = sender as PictureBox;
+            //        var dest = pictureBox.Tag as Tuple<int, int>;
+            //        board.MovePiece(SelectedPiece,dest);
+            //        RefreshBoard();
+            //        pictureBox1.Invalidate();
+            //    }
 
-                SelectedPiece = Tuple.Create(-1, -1);
-            }
+            //    SelectedPiece = Tuple.Create(-1, -1);
+            //}
             
+        }
+
+        private void hint_Click(object sender, EventArgs e)
+        {
+            var pictureBox = sender as PictureBox;
+            var dest = pictureBox.Tag as Tuple<int, int>;
+            board.MovePiece(SelectedPiece, dest);
+            comp.ResetHints();
+            RefreshBoard();
         }
 
         /*private void pictureBox_Click(object sender, EventArgs e)
@@ -126,6 +148,7 @@ namespace Chess_Visual
                     if (board.ChessBoard.ContainsKey(poz) && board.ChessBoard[poz] is Pawn)
                     {
                         pictureBox.SizeMode = PictureBoxSizeMode.AutoSize;
+                        pictureBox.Click += pictureBox_Click;
                         if (board.ChessBoard[poz].IsWhite)
                             pictureBox.ImageLocation = "../../Images/wp.png";
                         else
@@ -134,11 +157,11 @@ namespace Chess_Visual
                     else
                     {
                         pictureBox.ImageLocation = ""; // Clear the image if there's no piece on this square
+                        pictureBox.Click -= pictureBox_Click;
                     }
                 }
             }
         }
-
 
         private void Form1_Load(object sender, EventArgs e)
         {
