@@ -1,4 +1,7 @@
-﻿using Sah_clases.Clases;
+﻿using Chess_FrontEnd.Logic.Clases.PIeces;
+using Sah_clases.Abstract;
+using Sah_clases.Clases;
+using Sah_clases.Clases.PIeces;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -21,6 +24,7 @@ namespace Chess_FrontEnd.FormComponents
 
         public Tuple<int,int> SelectPiece(object sender)
         {
+            ResetHints();
             PictureBox pictureBox = sender as PictureBox;
             var initPoz = pictureBox.Tag as Tuple<int, int>;
             var moves = board.ChessBoard[initPoz].ShowValidMovements();
@@ -59,6 +63,29 @@ namespace Chess_FrontEnd.FormComponents
                 }
             }
             //hints.Clear();
+        }
+
+        public static string ParseImageString(AbstractPiece ChessPiece)
+        {
+            string imgStr = "../../Images/";
+            char? piece = null;
+            if (ChessPiece is Pawn)
+                piece = 'p';
+            else if (ChessPiece is Rook)
+                piece = 'r';
+            else if (ChessPiece is Bishop)
+                piece = 'b';
+            else if (ChessPiece is Queen)
+                piece = 'q';
+            else if (ChessPiece is Knight)
+                piece = 'n';
+            else if (ChessPiece is King)
+                piece = 'k';
+
+            if (ChessPiece.IsWhite)
+                return imgStr + 'w' + piece + ".png";
+            else
+                return imgStr + 'b' + piece + ".png";
         }
     }
 }

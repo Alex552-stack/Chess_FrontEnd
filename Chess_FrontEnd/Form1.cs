@@ -1,14 +1,8 @@
 ﻿using Chess_FrontEnd.FormComponents;
+using Chess_FrontEnd.Logic.Clases.PIeces;
 using Sah_clases.Clases;
-using Sah_clases.Clases.PIeces;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Chess_Visual
@@ -18,9 +12,9 @@ namespace Chess_Visual
         private const int gridSize = 8;
         private const int squareSize = 100; // Size of each square in pixels
         Board board;
-        Tuple<int, int> SelectedPiece = new Tuple<int,int>(-1,-1);
+        Tuple<int, int> SelectedPiece = new Tuple<int, int>(-1, -1);
         OnClickController comp;
-        
+
         public Form1()
         {
             InitializeComponent();
@@ -60,16 +54,13 @@ namespace Chess_Visual
 
 
                     var poz = Tuple.Create(i, j);
-                    if (board.ChessBoard.ContainsKey(poz) && board.ChessBoard[poz] is Pawn)
+                    if (board.ChessBoard.ContainsKey(poz))
                     {
                         pictureBox.Click += new EventHandler(pictureBox_Click);
                         pictureBox.SizeMode = PictureBoxSizeMode.AutoSize;
-                        if (board.ChessBoard[poz].IsWhite)
-                        pictureBox.ImageLocation = "../../Images/wp.png";
-                        else if(!board.ChessBoard[poz].IsWhite)
-                            pictureBox.ImageLocation = "../../Images/bp.png";
+                        pictureBox.ImageLocation = OnClickController.ParseImageString(board.ChessBoard[poz]);
                     }
-                    
+
                     pictureBox1.Controls.Add(pictureBox);
                 }
             }
@@ -78,7 +69,7 @@ namespace Chess_Visual
         private void pictureBox_Click(object sender, EventArgs e)
         {
             //if(SelectedPiece.Item1 == -1)
-                SelectedPiece = comp.SelectPiece(sender);
+            SelectedPiece = comp.SelectPiece(sender);
             //else
             //{
             //    if(sender is PictureBox)
@@ -92,13 +83,17 @@ namespace Chess_Visual
 
             //    SelectedPiece = Tuple.Create(-1, -1);
             //}
-            
+
         }
 
         private void hint_Click(object sender, EventArgs e)
         {
             var pictureBox = sender as PictureBox;
             var dest = pictureBox.Tag as Tuple<int, int>;
+            if (board.ChessBoard.ContainsKey(dest))
+                if (board.ChessBoard[dest] is King)
+                    GameEnd(board.ChessBoard[dest] as King);
+
             board.MovePiece(SelectedPiece, dest);
             comp.ResetHints();
             RefreshBoard();
@@ -136,6 +131,13 @@ namespace Chess_Visual
             }
         }*/
 
+        private void GameEnd(King king)
+        {
+            WinTextBox.Text = king.IsWhite ? "Black Wins" : "White Wins";
+            WinTextBox.Focus();
+            WinTextBox.Visible = true;
+        }
+
         private void RefreshBoard()
         {
             foreach (Control control in pictureBox1.Controls)
@@ -145,14 +147,13 @@ namespace Chess_Visual
                     PictureBox pictureBox = control as PictureBox;
                     Tuple<int, int> poz = pictureBox.Tag as Tuple<int, int>;
 
-                    if (board.ChessBoard.ContainsKey(poz) && board.ChessBoard[poz] is Pawn)
+                    if (board.ChessBoard.ContainsKey(poz))
                     {
+
                         pictureBox.SizeMode = PictureBoxSizeMode.AutoSize;
                         pictureBox.Click += pictureBox_Click;
-                        if (board.ChessBoard[poz].IsWhite)
-                            pictureBox.ImageLocation = "../../Images/wp.png";
-                        else
-                            pictureBox.ImageLocation = "../../Images/bp.png";
+                        pictureBox.ImageLocation = OnClickController.ParseImageString(board.ChessBoard[poz]);
+
                     }
                     else
                     {

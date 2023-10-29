@@ -53,6 +53,12 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="FormComponents\Components.cs" />
+    <Compile Include="Logic\Clases\Movement.cs" />
+    <Compile Include="Logic\Clases\PIeces\Bishop.cs" />
+    <Compile Include="Logic\Clases\PIeces\King.cs" />
+    <Compile Include="Logic\Clases\PIeces\Knight.cs" />
+    <Compile Include="Logic\Clases\PIeces\Queen.cs" />
+    <Compile Include="Logic\Clases\PIeces\Rook.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
