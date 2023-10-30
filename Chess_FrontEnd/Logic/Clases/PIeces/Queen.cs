@@ -19,11 +19,12 @@ namespace Chess_FrontEnd.Logic.Clases.PIeces
             return true;
         }
 
-        public override List<Tuple<int, int>> ShowValidMovements()
+        public override List<Tuple<int, int>> ShowAllMovement()
         {
             var moves = Movement.DiagonalMovement(x, y, board, IsWhite);
             moves = moves.Concat(Movement.StraightMovement(x, y, board, IsWhite)).ToList();
             return moves;
         }
+
     }
 }

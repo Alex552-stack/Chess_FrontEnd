@@ -166,5 +166,7 @@ namespace Chess_FrontEnd.Logic.Clases
             }
             return moves;
         }
+    
+        
     }
 }

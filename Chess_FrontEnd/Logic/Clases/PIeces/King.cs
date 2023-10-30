@@ -19,7 +19,28 @@ namespace Chess_FrontEnd.Logic.Clases.PIeces
             return true;
         }
 
-        public override List<Tuple<int, int>> ShowValidMovements()
+
+        public bool IsInCheck()
+        {
+            foreach (var piece in board.ChessBoard.Values)
+            {
+                if (piece != null && piece.IsWhite != IsWhite) // Check opponent's pieces
+                {
+                    var moves = piece.ShowValidMovements();
+                    foreach (var move in moves)
+                    {
+                        if (move.Item1 == x && move.Item2 == y)
+                        {
+                            // The king is in check if an opponent's piece can move to its position
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        public override List<Tuple<int, int>> ShowAllMovement()
         {
             return Movement.KingMovement(x, y, board, IsWhite);
         }

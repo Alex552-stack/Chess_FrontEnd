@@ -8,7 +8,7 @@ namespace Sah_clases.Interfaces
 {
     internal interface IPiece
     {
-        List<Tuple<int, int>> ShowValidMovements();
+        //internal List<Tuple<int, int>> ShowValidMovements();
         bool IsValidMove(int newx, int newy);
 
     }

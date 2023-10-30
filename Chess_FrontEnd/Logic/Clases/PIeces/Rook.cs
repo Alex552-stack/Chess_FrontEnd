@@ -35,9 +35,10 @@ namespace Chess_FrontEnd.Logic.Clases.PIeces
             return true;
         }
 
-        public override List<Tuple<int, int>> ShowValidMovements()
+        public override List<Tuple<int, int>> ShowAllMovement()
         {
             return Movement.StraightMovement(x, y, board, IsWhite);
         }
+
     }
 }

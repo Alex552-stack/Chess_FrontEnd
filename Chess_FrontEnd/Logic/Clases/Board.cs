@@ -1,28 +1,40 @@
 ﻿using Chess_FrontEnd.Logic.Clases.PIeces;
 using Sah_clases.Abstract;
 using Sah_clases.Clases.PIeces;
-using Sah_clases.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sah_clases.Clases
 {
     public class Board
     {
+
         internal Dictionary<Tuple<int, int>, AbstractPiece> ChessBoard;
+        internal King WhiteKing { get; private set; }
+        internal King BlackKing { get; private set; }
 
         public Board()
         {
             InitBoard();
-            
+            foreach (var piece in ChessBoard.Values)
+            {
+                if (piece != null && piece is King)
+                {
+                    if (piece.IsWhite)
+                    {
+                        WhiteKing = (King)piece;
+                    }
+                    else
+                    {
+                        BlackKing = (King)piece;
+                    }
+                }
+            }
         }
 
         public void MovePiece(Tuple<int, int> currentPosition, Tuple<int, int> newPosition)
         {
-            
+
 
             if (ChessBoard.ContainsKey(currentPosition))
             {
@@ -33,7 +45,7 @@ namespace Sah_clases.Clases
                     ChessBoard[newPosition] = pawn;
                     pawn.x = newPosition.Item1;
                     pawn.y = newPosition.Item2;
-                    if(pawn is Pawn)
+                    if (pawn is Pawn)
                     {
                         var paw = pawn as Pawn;
                         paw.isFirstMove = false;
@@ -60,9 +72,9 @@ namespace Sah_clases.Clases
             ChessBoard.Add(Tuple.Create(4, 0), bQueen);
 
             var wKing = new King(4, 7, this, true);
-            var bKing = new King(3,0,this, false);
+            var bKing = new King(3, 0, this, false);
             ChessBoard.Add(Tuple.Create(4, 7), wKing);
-            ChessBoard.Add(Tuple.Create(3,0), bKing);
+            ChessBoard.Add(Tuple.Create(3, 0), bKing);
 
             for (int i = 0; i < 8; i++)
             {
@@ -80,20 +92,50 @@ namespace Sah_clases.Clases
                     ChessBoard.Add(Tuple.Create(i, 0), bishop);
                     ChessBoard.Add(Tuple.Create(i, 7), bishop1);
                 }
-                else if(i == 2 || i == 5)
+                else if (i == 2 || i == 5)
                 {
                     var knight = new Knight(i, 0, this, false);
                     var knight1 = new Knight(i, 7, this, true);
                     ChessBoard.Add(Tuple.Create(i, 0), knight);
                     ChessBoard.Add(Tuple.Create(i, 7), knight1);
                 }
-                
+
                 var pawn = new Pawn(i, 1, this, false);
                 ChessBoard.Add(Tuple.Create(i, 1), pawn);
                 var pawn1 = new Pawn(i, 6, this, true);
                 ChessBoard.Add(Tuple.Create(i, 6), pawn1);
             }
         }
+
+        //public bool IsMoveLeavingKingInCheck(int currentX, int currentY, int newX, int newY, bool isWhite)
+        //{
+        //    // Simulate the move temporarily
+        //    AbstractPiece capturedPiece = ChessBoard[Tuple.Create(newX, newY)];
+        //    ChessBoard.Remove(Tuple.Create(newX, newY));
+        //    ChessBoard.Add(Tuple.Create(currentX, currentY), null);
+
+        //    // Check if the own king is in check after the move
+        //    bool isLeavingKingInCheck = OwnKingIsInCheck(isWhite);
+
+        //    // Undo the temporary move
+        //    ChessBoard.Remove(Tuple.Create(currentX, currentY));
+        //    ChessBoard.Add(Tuple.Create(newX, newY), capturedPiece);
+
+        //    return isLeavingKingInCheck;
+        //}
+        //private bool OwnKingIsInCheck(bool isWhite)
+        //{
+        //    // Check if the white king is in check
+        //    if (isWhite)
+        //    {
+        //        return WhiteKing.IsInCheck();
+        //    }
+        //    // Check if the black king is in check
+        //    else
+        //    {
+        //        return BlackKing.IsInCheck();
+        //    }
+        //}
 
         public void PrintBoard()
         {
